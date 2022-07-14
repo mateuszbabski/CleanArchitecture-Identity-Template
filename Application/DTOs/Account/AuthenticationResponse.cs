@@ -12,8 +12,7 @@ namespace Application.DTOs.Account
         public string FirstName { get; set; }
         public string Email { get; set; }
         public string JWTToken { get; set; }
-        public string Role { get; set; }
-        public bool IsVerified { get; set; }
+        public List<string> Roles { get; set; }
         public string RefreshToken { get; set; }
         
     }

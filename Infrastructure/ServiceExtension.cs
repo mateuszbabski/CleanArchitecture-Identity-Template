@@ -1,6 +1,8 @@
-﻿using Domain.Settings;
+﻿using Application.Interfaces;
+using Domain.Settings;
 using Infrastructure.Identity.Context;
 using Infrastructure.Identity.Model;
+using Infrastructure.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -31,7 +33,10 @@ namespace Infrastructure
                 .AddDefaultTokenProviders();
 
 
-            services.Configure<JWTSettings>(configuration.GetSection("Authentication"));
+            var jwtSettings = new JWTSettings();
+
+            configuration.GetSection("Authentication").Bind(jwtSettings);
+            services.AddSingleton(jwtSettings);
 
             services.AddAuthentication(opt =>
             {
@@ -45,13 +50,16 @@ namespace Infrastructure
                     cfg.SaveToken = true;
                     cfg.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = configuration["Authentication:Issuer"],
-                        ValidAudience = configuration["Authentication:Audience"],
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                     };
                 });
+
+            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+            services.AddTransient<IEmailService, EmailService>();
 
 
 
