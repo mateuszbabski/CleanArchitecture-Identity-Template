@@ -7,20 +7,15 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Account
 {
-    public class RegisterRequest
+    public class ChangePasswordRequest
     {
-        public string FirstName { get; set; }
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
+        public string OldPassword { get; set; }
         [Required]
         [MinLength(6)]
-        public string Password { get; set; }
-
+        public string NewPassword { get; set; }
         [Required]
-        [Compare("Password")]
-        public string PasswordConfirmation { get; set; }
-
+        [MinLength(6)]
+        public string ConfirmNewPassword { get; set; }
     }
 }

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Mapping
+namespace Domain.Common
 {
-    public class MappingProfile
+    public abstract class BaseEntity
     {
+        public virtual int Id { get; set; }
     }
 }
