@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Identity\Context\" />
+    <Folder Include="Identity\Model\" />
+    <Folder Include="Identity\Services\" />
+  </ItemGroup>
+
 </Project>
