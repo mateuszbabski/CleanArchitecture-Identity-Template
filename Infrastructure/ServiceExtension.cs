@@ -20,7 +20,7 @@ namespace Infrastructure
 {
     public static class ServiceExtension
     {
-        public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
 
             services.AddDbContext<IdentityContext>(options =>
@@ -62,7 +62,7 @@ namespace Infrastructure
             services.AddTransient<IEmailService, EmailService>();
 
 
-
+            return services;
 
         }
     }

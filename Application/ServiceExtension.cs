@@ -12,10 +12,11 @@ namespace Application
 {
     public static class ServiceExtension
     {
-        public static void AddApplicationLayer(IServiceCollection services)
+        public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
         {
             //services.AddAutoMapper(Assembly.GetExecutingAssembly());
             //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            return services;
         }
     }
 }

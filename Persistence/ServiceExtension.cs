@@ -12,13 +12,15 @@ namespace Persistence
 {
     public static class ServiceExtension
     {
-        public static void AddPersistenceInfrastructure(IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+            return services;
         }
     }
 }
