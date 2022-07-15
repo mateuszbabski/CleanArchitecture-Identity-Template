@@ -92,6 +92,11 @@ namespace Infrastructure.Identity.Services
             {
                 await _userManager.AddToRoleAsync(user, Roles.Basic.ToString());
             }
+                
+
+            //var checkEmail = await _userManager.FindByEmailAsync(user.Email);
+            //if (checkEmail == null)
+            //    throw new ApiException($"{result.Errors}");
 
             return new Response<string>(user.Id, message: $"User id: {user.Id} registered.");
 

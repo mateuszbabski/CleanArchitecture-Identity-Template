@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Infrastructure.Identity.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,13 @@ namespace Persistence.Context
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
-
         }
-
-        //public DbSet<User> Users { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            
-            return await base.SaveChangesAsync(cancellationToken);
+
+        return await base.SaveChangesAsync(cancellationToken);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,3 +29,5 @@ namespace Persistence.Context
 
     }
 }
+        
+

@@ -15,8 +15,8 @@ namespace Infrastructure.Identity.Context
         public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
         {
         }
+        //public DbSet<ApplicationUser> Users { get; set; }
         
-        protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlServer("IdentityConnection");
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -26,11 +26,6 @@ namespace Infrastructure.Identity.Context
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "User");
-            });
-
-            builder.Entity<ApplicationUser>(entity =>
-            {
-                entity.ToTable("Email");
             });
 
             builder.Entity<IdentityRole>(entity =>
@@ -43,21 +38,19 @@ namespace Infrastructure.Identity.Context
                 entity.ToTable("UserClaims");
             });
 
-            builder.Entity<ApplicationUser>(entity =>
-            {
-                entity.ToTable("Password");
-            });
-
-            builder.Entity<ApplicationUser>(entity =>
-            {
-                entity.ToTable("HashedPassword");
-            });
-
             builder.Entity<IdentityUserToken<string>>(entity =>
             {
                 entity.ToTable("UserTokens");
             });
+
+            builder.Entity<IdentityUserLogin<string>>(entity =>
+            {
+                entity.ToTable("UserLogins");
+            });
+
         }
     }
 }
+            
+
 

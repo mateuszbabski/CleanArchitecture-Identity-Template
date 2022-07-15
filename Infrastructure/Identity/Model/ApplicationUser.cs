@@ -11,7 +11,7 @@ namespace Infrastructure.Identity.Model
     public class ApplicationUser : IdentityUser
     {
         public string FirstName { get; set; }
-        public string Email { get; set; }
+        override public string Email { get; set; }
         public string Password { get; set; }
         public string HashedPassword { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
