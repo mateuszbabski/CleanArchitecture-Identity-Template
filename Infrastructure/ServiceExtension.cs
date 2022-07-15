@@ -2,6 +2,7 @@
 using Domain.Settings;
 using Infrastructure.Identity.Context;
 using Infrastructure.Identity.Model;
+using Infrastructure.Identity.Services;
 using Infrastructure.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,6 +32,8 @@ namespace Infrastructure
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddTransient<IAccountServices, AccountServices>();
 
 
             var jwtSettings = new JWTSettings();
