@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -55,11 +56,25 @@ namespace Infrastructure.Identity.Services
             if (isEmailInUse != null)
                 return new AuthenticationResponse { Errors = new[] { "Email is already taken" } };
 
-            var newUser = _mapper.Map<User>(request);
-            await _userRepository.RegisterNewUserAsync(newUser);
+            var newUser = new User()
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                PhoneNumber = request.PhoneNumber,
+                Email = request.Email,
+                Password = request.Password,
+            };
 
-            return await GenerateAuthenticationResponseForUserAsync(newUser);
+            var hashedPassword = _passwordHasher.HashPassword(newUser, request.Password);
+            newUser.PasswordHash = hashedPassword;
+            newUser.Role = Roles.Basic.ToString();
+
+            var user = _mapper.Map<User>(newUser);
+            await _userRepository.RegisterNewUserAsync(user);
+
+            return await GenerateAuthenticationResponseForUserAsync(user);
         }
+
 
         public async Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request)
         {

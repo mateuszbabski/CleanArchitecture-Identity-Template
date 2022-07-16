@@ -5,11 +5,14 @@ namespace Api.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
-            UserId = int.Parse(httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
+            _httpContextAccessor = httpContextAccessor;
         }
+        public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
-        public int UserId { get; }
+        public int UserId => int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
     }
 }

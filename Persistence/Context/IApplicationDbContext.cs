@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Infrastructure.Identity.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Context

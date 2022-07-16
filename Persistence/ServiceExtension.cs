@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

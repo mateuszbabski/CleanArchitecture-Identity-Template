@@ -24,9 +24,7 @@ namespace Application.DTOs.Account
                 .Equal(x => x.Password)
                 .WithMessage("Password and confirm password are not the same");
 
-            RuleFor(x => x.PhoneNumber)
-                .Matches(@"[0-9]*$")
-                .WithMessage("Propery must contain only digits");
         }
     }
 }
+            

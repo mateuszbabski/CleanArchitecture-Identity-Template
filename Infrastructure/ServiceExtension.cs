@@ -1,21 +1,12 @@
 ﻿using Application.Interfaces;
 using Domain.Settings;
-using Infrastructure.Identity.Context;
-using Infrastructure.Identity.Model;
 using Infrastructure.Identity.Services;
 using Infrastructure.Services;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure
 {
