@@ -1,11 +1,12 @@
-﻿using Infrastructure.Identity.Model;
+﻿using Domain.Entities;
+using Infrastructure.Identity.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Context
 {
     public interface IApplicationDbContext
     {
-        DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        DbSet<User> Users { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

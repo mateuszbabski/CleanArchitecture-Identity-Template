@@ -1,4 +1,5 @@
-﻿using Infrastructure.Identity.Model;
+﻿using Domain.Entities;
+using Infrastructure.Identity.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Persistence.Context
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
