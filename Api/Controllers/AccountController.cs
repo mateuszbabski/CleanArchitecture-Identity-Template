@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Account;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -8,29 +9,41 @@ namespace Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountServices _accountService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AccountController(IAccountServices accountService)
+        public AccountController(IAuthenticationService authenticationService)
         {
-            _accountService = accountService;
+            _authenticationService = authenticationService;
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync(AuthenticationRequest request)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticationRequest request)
         {
-            return Ok(await _accountService.AuthenticateAsync(request));
+            return Ok(await _authenticationService.AuthenticateAsync(request));
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
         {
-            return Ok(await _accountService.RegisterAsync(request));
+            return Ok(await _authenticationService.RegisterAsync(request));
         }
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest request)
+        {
+            return Ok(await _authenticationService.ChangePasswordAsync(request));
+        }
+        //[HttpGet("{id}", Name = "GetUserById")]
+        //public async Task<UserViewModel> GetUserById(int id)
+        //{
+        //    return Ok(await _authenticationService.GetUserById(id));
+        //}
 
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
-        {
-            return Ok(await _accountService.ResetPassword(request));
-        }
+        //[Authorize]
+        //[HttpGet("{id}", Name = "GetUserDetailsById")]
+        //public async Task<UserViewModel> GetUserDetailsById(int id)
+        //{
+        //    return Ok(await _authenticationService.GetUserDetailsById(id));
+        //}
     }
 }
