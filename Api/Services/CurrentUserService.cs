@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Application.Interfaces;
+using System.Security.Claims;
 
 namespace Api.Services
 {
@@ -6,9 +7,9 @@ namespace Api.Services
     {
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
-            UserId = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            UserId = int.Parse(httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
         }
 
-        public string UserId { get; }
+        public int UserId { get; }
     }
 }

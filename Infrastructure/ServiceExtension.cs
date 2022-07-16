@@ -24,30 +24,6 @@ namespace Infrastructure
         public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
 
-            services.AddDbContext<IdentityContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"),
-                b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
-
-
-            services.AddIdentity<ApplicationUser, IdentityRole>(
-                options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequiredUniqueChars = 0;
-                })
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
-            
-
-            services.AddTransient<IAccountServices, AccountServices>();
-
-
             var jwtSettings = new JWTSettings();
 
             configuration.GetSection("Authentication").Bind(jwtSettings);
@@ -73,6 +49,8 @@ namespace Infrastructure
                     };
                 });
 
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
             services.AddTransient<IEmailService, EmailService>();
 
@@ -82,3 +60,6 @@ namespace Infrastructure
         }
     }
 }
+            
+
+

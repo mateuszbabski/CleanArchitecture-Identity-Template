@@ -1,5 +1,7 @@
-﻿using Application.DTOs.Account;
+﻿using Api.Services;
+using Application.DTOs.Account;
 using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +21,7 @@ namespace Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticationRequest request)
         {
-            return Ok(await _authenticationService.AuthenticateAsync(request));
+            return Ok(await _authenticationService.LoginAsync(request));
         }
 
         [HttpPost("register")]
@@ -34,11 +36,11 @@ namespace Api.Controllers
             return Ok(await _authenticationService.ChangePasswordAsync(request));
         }
         //[HttpGet("{id}", Name = "GetUserById")]
-        //public async Task<UserViewModel> GetUserById(int id)
+        //public async Task<User> GetUserById(int id)
         //{
-        //    return Ok(await _authenticationService.GetUserById(id));
+        //    return await _userRepository.GetUserByIdAsync(id);
         //}
-
+            
         //[Authorize]
         //[HttpGet("{id}", Name = "GetUserDetailsById")]
         //public async Task<UserViewModel> GetUserDetailsById(int id)
@@ -47,3 +49,5 @@ namespace Api.Controllers
         //}
     }
 }
+            
+
