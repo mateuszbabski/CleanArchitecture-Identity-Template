@@ -8,6 +8,8 @@ namespace Application.DTOs.Account
 {
     public class AuthenticationResponse
     {
+        public bool IsSuccess { get; set; }
+        public string[] Errors { get; set; }
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string Email { get; set; }

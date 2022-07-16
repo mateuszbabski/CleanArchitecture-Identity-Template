@@ -1,12 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
 using FluentValidation;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Application.DTOs.Account;
 
 namespace Application
 {
@@ -14,8 +9,11 @@ namespace Application
     {
         public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
         {
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
             return services;
         }
     }
