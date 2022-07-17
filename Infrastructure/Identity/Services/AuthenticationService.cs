@@ -82,7 +82,13 @@ namespace Infrastructure.Identity.Services
             var user = _mapper.Map<User>(newUser);
             await _userRepository.RegisterNewUserAsync(user);
 
-            return await GenerateAuthenticationResponseForUserAsync(user);
+            //return await GenerateAuthenticationResponseForUserAsync(user);
+            return new AuthenticationResponse 
+            { 
+                IsSuccess = true, 
+                Id = user.Id, 
+                Email = user.Email
+            };
         }
 
 
@@ -105,11 +111,11 @@ namespace Infrastructure.Identity.Services
 
             await _userRepository.UpdateUserAsync(changedPasswordUser);
 
-            return await Task.FromResult(new ChangePasswordResponse
+            return new ChangePasswordResponse
             {
                 IsSuccess = true,
                 Password = request.NewPassword
-            });
+            };
         }
         private Task<AuthenticationResponse> GenerateAuthenticationResponseForUserAsync(User user)
         {
@@ -124,7 +130,7 @@ namespace Infrastructure.Identity.Services
             };
 
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_jwtSettings.DurationInMinutes);
+            var expires = DateTime.Now.AddDays(_jwtSettings.DurationInDays);
 
             var token = new JwtSecurityToken(_jwtSettings.Issuer,
                 _jwtSettings.Audience,
