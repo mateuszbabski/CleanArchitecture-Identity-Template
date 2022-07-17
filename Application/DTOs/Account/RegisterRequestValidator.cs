@@ -11,6 +11,7 @@ namespace Application.DTOs.Account
     {
         public RegisterRequestValidator()
         {
+            
             RuleFor(m => m.Email)
                 .NotEmpty()
                 .EmailAddress()
@@ -24,7 +25,11 @@ namespace Application.DTOs.Account
                 .Equal(x => x.Password)
                 .WithMessage("Password and confirm password are not the same");
 
+            RuleFor(x => x.PhoneNumber)
+                .Matches("^[0-9]*$")
+                .WithMessage("Only digits allowed");
         }
     }
 }
+
             

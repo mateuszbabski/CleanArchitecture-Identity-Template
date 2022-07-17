@@ -19,10 +19,14 @@ namespace Persistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.PhoneNumber)
+                .IsRequired(false);
         }
-
-
     }
 }
         
+
+
 

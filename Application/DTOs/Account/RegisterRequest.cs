@@ -10,8 +10,7 @@ namespace Application.DTOs.Account
     public class RegisterRequest
     {
         public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
         [EmailAddress]
@@ -27,3 +26,6 @@ namespace Application.DTOs.Account
 
     }
 }
+        
+
+        

@@ -16,25 +16,11 @@ namespace Persistence.Repositories
 
         public async Task<User> RegisterNewUserAsync(User user)
         {
-            //var newUser = new User()
-            //{
-            //    FirstName = user.FirstName,
-            //    LastName = user.LastName,
-            //    PhoneNumber = user.PhoneNumber,
-            //    Email = user.Email,
-            //    Password = user.Password,
-            //    Role = Roles.Basic.ToString()
-            //};
-
-            //var hashedPassword = _passwordHasher.HashPassword(newUser, user.Password);
-            //newUser.PasswordHash = hashedPassword;
-
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
 
             return user;
         }
-
         public async Task UpdateUserAsync(User user)
         {
             await _dbContext.SaveChangesAsync();
@@ -50,6 +36,8 @@ namespace Persistence.Repositories
         }
     }
 }
+
+
 
         
 

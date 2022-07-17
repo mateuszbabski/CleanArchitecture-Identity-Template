@@ -41,11 +41,17 @@ namespace Infrastructure.Identity.Services
         {
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
             if (user == null)
-                return new AuthenticationResponse { Errors = new[] { "Email or password incorrect" } };
+                return new AuthenticationResponse { 
+                    IsSuccess = false, 
+                    Errors = new[] { "Email or password incorrect" } 
+                };
 
             var verifyPassword = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if(verifyPassword == PasswordVerificationResult.Failed)
-                return new AuthenticationResponse { Errors = new[] { "Email or password incorrect" } };
+                return new AuthenticationResponse { 
+                    IsSuccess = false, 
+                    Errors = new[] { "Email or password incorrect" } 
+                };
 
             return await GenerateAuthenticationResponseForUserAsync(user);
         }
@@ -54,13 +60,17 @@ namespace Infrastructure.Identity.Services
         {
             var isEmailInUse = await _userRepository.GetUserByEmailAsync(request.Email);
             if (isEmailInUse != null)
-                return new AuthenticationResponse { Errors = new[] { "Email is already taken" } };
-
+                return new AuthenticationResponse
+                {
+                    IsSuccess = false,
+                    Errors = new[] { "Email is already taken" }
+                };
+                
+                    
             var newUser = new User()
             {
                 FirstName = request.FirstName,
-                LastName = request.LastName,
-                PhoneNumber = request.PhoneNumber,
+                PhoneNumber = request?.PhoneNumber,
                 Email = request.Email,
                 Password = request.Password,
             };
@@ -127,13 +137,19 @@ namespace Infrastructure.Identity.Services
             return Task.FromResult(new AuthenticationResponse
             {
                 IsSuccess = true,
-                JWTToken = tokenHandler.WriteToken(token)
-
+                JWTToken = tokenHandler.WriteToken(token),
+                Id = user.Id,
+                FirstName = user.FirstName,
+                Email = user.Email
             });
-
-
         }
     }
 }
+
+
+
+
+
+
 
 
