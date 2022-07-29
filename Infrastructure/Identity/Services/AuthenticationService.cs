@@ -22,19 +22,16 @@ namespace Infrastructure.Identity.Services
         private readonly IUserRepository _userRepository;
         private readonly JWTSettings _jwtSettings;
         private readonly IMapper _mapper;
-        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ICurrentUserService _userService;
 
         public AuthenticationService(IUserRepository userRepository,
             JWTSettings jwtSettings, 
-            IMapper mapper, 
-            IPasswordHasher<User> passwordHasher,
+            IMapper mapper,
             ICurrentUserService userService)
         {
             _userRepository = userRepository;
             _jwtSettings = jwtSettings;
             _mapper = mapper;
-            _passwordHasher = passwordHasher;
             _userService = userService;
         }
 
