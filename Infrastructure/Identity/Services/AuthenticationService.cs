@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,19 +42,29 @@ namespace Infrastructure.Identity.Services
         {
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
             if (user == null)
-                return new AuthenticationResponse { 
-                    IsSuccess = false, 
-                    Errors = new[] { "Email or password incorrect" } 
+                return new AuthenticationResponse
+                {
+                    IsSuccess = false,
+                    Errors = new[] { "Email or password incorrect" }
                 };
 
-            var verifyPassword = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-            if(verifyPassword == PasswordVerificationResult.Failed)
-                return new AuthenticationResponse { 
-                    IsSuccess = false, 
-                    Errors = new[] { "Email or password incorrect" } 
+            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+                return new AuthenticationResponse
+                {
+                    IsSuccess = false,
+                    Errors = new[] { "Email or password incorrect" }
                 };
 
-            return await GenerateAuthenticationResponseForUserAsync(user);
+            var token = GenerateJwtToken(user);
+
+            return new AuthenticationResponse
+            {
+                IsSuccess = true,
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                JWTToken = token
+            };
         }
 
         public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request)
@@ -65,29 +76,29 @@ namespace Infrastructure.Identity.Services
                     IsSuccess = false,
                     Errors = new[] { "Email is already taken" }
                 };
-                
-                    
+
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
             var newUser = new User()
             {
                 FirstName = request.FirstName,
                 PhoneNumber = request?.PhoneNumber,
                 Email = request.Email,
                 Password = request.Password,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Role = Roles.Basic.ToString()
             };
-
-            var hashedPassword = _passwordHasher.HashPassword(newUser, request.Password);
-            newUser.PasswordHash = hashedPassword;
-            newUser.Role = Roles.Basic.ToString();
 
             var user = _mapper.Map<User>(newUser);
             await _userRepository.RegisterNewUserAsync(user);
 
-            //return await GenerateAuthenticationResponseForUserAsync(user);
-            return new AuthenticationResponse 
-            { 
-                IsSuccess = true, 
-                Id = user.Id, 
-                Email = user.Email
+            return new AuthenticationResponse
+            {
+                IsSuccess = true,
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName
             };
         }
 
@@ -104,8 +115,10 @@ namespace Infrastructure.Identity.Services
                     Errors = "Old password is incorrect or new password is not confirmed"
                 };
 
+            CreatePasswordHash(request.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
             user.Password = request.NewPassword;
-            user.PasswordHash = _passwordHasher.HashPassword(user, request.NewPassword);
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
 
             var changedPasswordUser = _mapper.Map<User>(request);
 
@@ -117,7 +130,59 @@ namespace Infrastructure.Identity.Services
                 Password = request.NewPassword
             };
         }
-        private Task<AuthenticationResponse> GenerateAuthenticationResponseForUserAsync(User user)
+
+        public async Task<ChangePasswordResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+            if (user == null)
+                return new ChangePasswordResponse
+                {
+                    IsSuccess = false,
+                    Errors = "Invalid email"
+                };
+
+            user.PasswordResetToken = CreateRandomToken();
+            user.ResetTokenExpires = DateTime.Now.AddDays(1);
+            await _userRepository.UpdateUserAsync(user);
+            return new ChangePasswordResponse
+            {
+                IsSuccess = true,
+                Errors = null
+            };
+        }
+
+        public async Task<ChangePasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+            if (user == null || user.PasswordResetToken == null
+                                || user.PasswordResetToken != request.Token
+                                || user.ResetTokenExpires < DateTime.Now)
+                return new ChangePasswordResponse
+                {
+                    IsSuccess = false,
+                    Errors = "Invalid email or token"
+                };
+
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.Password = request.Password;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.PasswordResetToken = null;
+            user.ResetTokenExpires = null;
+
+            await _userRepository.UpdateUserAsync(user);
+            return new ChangePasswordResponse
+            {
+                IsSuccess = true,
+                Errors = null,
+                Password = request.Password
+            };
+        }
+
+
+
+        private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Key));
 
@@ -140,14 +205,29 @@ namespace Infrastructure.Identity.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            return Task.FromResult(new AuthenticationResponse
+            return tokenHandler.WriteToken(token);
+        }
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512())
             {
-                IsSuccess = true,
-                JWTToken = tokenHandler.WriteToken(token),
-                Id = user.Id,
-                FirstName = user.FirstName,
-                Email = user.Email
-            });
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }
+
+        private string CreateRandomToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
     }
 }

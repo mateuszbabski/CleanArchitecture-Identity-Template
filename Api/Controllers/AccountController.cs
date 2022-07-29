@@ -35,12 +35,24 @@ namespace Api.Controllers
         {
             return Ok(await _authenticationService.ChangePasswordAsync(request));
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordRequest request)
+        {
+            return Ok(await _authenticationService.ForgotPasswordAsync(request));
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequest request)
+        {
+            return Ok(await _authenticationService.ResetPasswordAsync(request));
+        }
         //[HttpGet("{id}", Name = "GetUserById")]
         //public async Task<User> GetUserById(int id)
         //{
         //    return await _userRepository.GetUserByIdAsync(id);
         //}
-            
+
         //[Authorize]
         //[HttpGet("{id}", Name = "GetUserDetailsById")]
         //public async Task<UserViewModel> GetUserDetailsById(int id)
